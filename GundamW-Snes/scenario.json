@@ -1,0 +1,17 @@
+{
+    "done": {
+      "variables": {
+        "playerhealth":{
+            "op": "greater-than",
+            "reference": 9999999
+        }
+      }
+    },
+    "reward": {
+      "variables": {
+        "enemyhealth": {
+          "reward": 0
+        }
+      }
+    }
+  }

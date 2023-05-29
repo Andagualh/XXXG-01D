@@ -1,0 +1,51 @@
+FROM bitnami/pytorch
+
+ENV LANG C.UTF-8
+ENV DEBIAN_FRONTEND noninteractive
+ENV MPLLOCALFREETYPE 1
+
+RUN apt-get update && apt-get install -y --no-install-recommends \
+    	git \
+    	wget \
+    	vim \
+    	curl \
+    	zip \
+		zlib1g-dev \
+    	unzip \
+    	pkg-config \
+    	libgl-dev \
+    	libblas-dev \
+    	liblapack-dev \
+    	graphviz \
+   	 	libhdf5-dev \
+		python3.8 \
+		python3-pip \
+		python-dev \
+		python3.8-dev \
+		python3.8-venv \
+		python3-setuptools \
+		build-essential \
+        ffmpeg \
+        libsm6 \
+        libxext6 \
+		swig \
+    	apt-transport-https \
+    	lsb-release \
+    	libpng-dev \
+		&& apt-get clean && rm -rf /var/lib/apt/lists/*
+
+RUN rm /usr/bin/python3
+RUN ln -s /usr/bin/python3.8 /usr/bin/python3
+
+RUN python3 -m pip install --upgrade pip
+COPY requirements.txt requirements.txt
+RUN python3 -m pip install -r requirements.txt
+
+ADD main.py .
+
+COPY airetro.py airetro.py
+COPY hyperparameters.py hyperparameters.py
+COPY test.py test.py
+COPY train.py train.py
+COPY . .
+CMD ["python3", "./main.py"]

@@ -1,0 +1,24 @@
+{
+  "info": {
+    "enemyhealth": {
+      "address": 7030,
+      "type": "<d2"
+    },
+    "hitcomboenemy": {
+      "address": 7086,
+      "type": "<d2"
+    },
+    "hitcomboplayer": {
+      "address": 7082,
+      "type": "<d2"
+    },
+    "playerhealth": {
+      "address": 7032,
+      "type": "<u2"
+    },
+    "wincounttrialmode": {
+      "address": 1294,
+      "type": "<d2"
+    }
+  }
+}
