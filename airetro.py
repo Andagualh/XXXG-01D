@@ -6,6 +6,7 @@ from gym.spaces import MultiBinary, Box
 import numpy as np
 import cv2
 from matplotlib import pyplot as plt
+import sys
 
 SCRIPT_DIR = os.path.dirname(os.path.abspath(__file__))
 
@@ -63,7 +64,6 @@ class TrainingEnv(Env):
 		frame_delta = obs - self.previous_frame
 		self.previous_frame = obs
 
-		#reward = (self.EnemyHealthReward(info) + self.PlayerComboReward(info)) - self.PlayerHealthPenalty(info)
 		if info['enemyhealth'] < self.enemyhealth:
 			reward = (info['enemyhealth'] - self.enemyhealth)*-1
 			self.enemyhealth = info['enemyhealth']
@@ -71,15 +71,6 @@ class TrainingEnv(Env):
 			reward = 0
 			self.enemyhealth = info['enemyhealth']
 		
-		#if self.winState(ogobs):
-		#	reward = 100
-		
-		#if info['playerhealth'] == 0:
-		#	if self.loseState(ogobs):
-		#		done = True
-
-
-
 		return frame_delta, reward, done, info
 	
 	def render(self, *args, **kwargs):

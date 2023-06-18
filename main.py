@@ -1,7 +1,7 @@
 import airetro
-import hyperparameters
+from hyperparameters import hyperparameters
 from test import test
-import train
+from train import train
 
 select = 0
 while(select == 0):
@@ -9,14 +9,16 @@ while(select == 0):
     print("Input: ")
     select = input()
     if(select == '1'):
-        hyperparameters()
+        hyperclass = hyperparameters()
+        hyperclass.train()
         break
     elif(select == '2'):
         testclass = test()
         testclass.start()
         break
     elif(select == '3'):
-        train()
+        trainclass = train()
+        trainclass.__init__()
         break
     elif(select == 'quit'):
         break

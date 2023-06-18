@@ -34,7 +34,8 @@ class hyperparameters():
                 self.model.save(model_path)
             return True
 
-
+    def __init__(self):
+        pass
     #Function to return test hyperparameters
     def optimize_ppo(trial):
         return {
@@ -77,7 +78,7 @@ class hyperparameters():
         except Exception as e:
             print(e)
             return -1000
-    def train():
+    def train(self):
         #Runtime exec
         study = optuna.create_study(direction='maximize')
         #jobs = parallel execution
