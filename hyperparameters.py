@@ -16,10 +16,14 @@ from stable_baselines3.common.callbacks import BaseCallback
 import airetro
 
 class hyperparameters():
+    #Tensorboard logs path
     LOG_DIR = './logs/'
+    #Optuna Best Models path store
     OPT_DIR = './opt/'
+    #Model save path after freq has been met
     CHECKPOINT_DIR = './train/'
 
+    #Callback for Algorithm
     class TrainLoggingCallback(BaseCallback):
         def __init__ (self, check_freq, save_path, verbose=1):
             super(hyperparameters.TrainLoggingCallback, self).__init__(verbose)
@@ -36,39 +40,42 @@ class hyperparameters():
 
     def __init__(self):
         pass
-    #Function to return test hyperparameters
+    #Optuna Range of Hyperparameters to try
     def optimize_ppo(trial):
         return {
-            'n_steps':trial.suggest_int('n_steps', 2048, 8192),
-            'gamma':trial.suggest_loguniform('gamma', 0.8, 0.999),
+            'n_steps':trial.suggest_int('n_steps', 2048, 8541),
+            'gamma':trial.suggest_loguniform('gamma', 0.811, 0.999),
             'learning_rate':trial.suggest_loguniform('learning_rate', 1e-5, 1e-4),
             'clip_range':trial.suggest_uniform('clip_range', 0.1, 0.4),
-            'gae_lambda':trial.suggest_uniform('gae_lambda', 0.8, 0.999)
+            'gae_lambda':trial.suggest_uniform('gae_lambda', 0.811, 0.999)
         }
 
-    #Training loop return -> return mean reward
     def optimize_agent(trial):
         try:
-            model_params = hyperparameters.optimize_ppo(trial)
-
-            #Enviroment summon
+            #Training Environment Creation
             env = airetro.TrainingEnv()
             env = Monitor(env, hyperparameters.LOG_DIR)
             env = DummyVecEnv([lambda:env])
             env = VecFrameStack(env, 4, channels_order='last')
 
-            #New Algorithm
+            #Optuna Range of Hyperparameters to try
+            model_params = hyperparameters.optimize_ppo(trial)
+            #Creates a new model, comment if you want to load an existing model
             model = PPO('CnnPolicy', env, tensorboard_log=hyperparameters.LOG_DIR, verbose=0, **model_params)
+            #Uses an existing model, comment if you want to use a new model
             #model = PPO.load('C:\\Users\\Acofp\\Desktop\\TFG\\OpenAIRetro\\train\\best_model_20000.zip')
+            
             #Iterations
             callback = hyperparameters.TrainLoggingCallback(check_freq=10000, save_path=hyperparameters.CHECKPOINT_DIR)
+            #Start training
             model.learn(total_timesteps=30000, callback=callback)
 
             #Model evaluation
-            #n eval episode: number of games
+            #n eval episode: number of games played with a set of hyperparameters
             mean_reward, _ = evaluate_policy(model, env, n_eval_episodes=5)
             env.close()
 
+            #Save best results
             SAVE_PATH = os.path.join(hyperparameters.OPT_DIR, 'trial_{}_best_model'.format(trial.number))
             model.save(SAVE_PATH)
 
@@ -77,32 +84,13 @@ class hyperparameters():
 
         except Exception as e:
             print(e)
-            return -1000
+            return -9999
+ 
+    #Main flow of execution of this class
     def train(self):
-        #Runtime exec
+        #Optuna Study creation
         study = optuna.create_study(direction='maximize')
-        #jobs = parallel execution
+        #Just use 1 job, Gym Retro doesn't supports parallel executions due to runtime limitations
         study.optimize(hyperparameters.optimize_agent, n_trials=50, n_jobs=1)
-
-        #Load Model
-        #model = PPO.load('modelroute')
-        #mean_reward, _ = evaluate_policy(model, env, render=True, n_eval_episodes=1)
-
-
-        #Testing
-        #env.step(model.predict(obs)[0])
-        ## Reset game to starting state
-        #obs = env.reset()
-        # Set flag to flase
-        #done = False
-        #for game in range(1): 
-        #    while not done: 
-        #        if done: 
-        #            obs = env.reset()
-        #        env.render()
-        #        action = model.predict(obs)[0]
-        #        obs, reward, done, info = env.step(action)
-        #        time.sleep(0.01)
-        #        print(reward)
 
 

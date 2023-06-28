@@ -1,7 +1,7 @@
 from lib2to3.pytree import Base
 import os
 import optuna
-#PPO Algorithm implementation (Subject to change)
+#PPO Algorithm implementation
 from stable_baselines3 import PPO
 import stable_baselines3
 #Evaluation policy
@@ -15,9 +15,12 @@ import airetro
 import time
 from pathlib import Path
 
+#Tensorboard log path
 LOG_DIR = './logs/'
+#Model save path
 CHECKPOINT_DIR = './train/'
 
+#Callback for Algorithm
 class TrainAndLoggingCallback(BaseCallback):
 
     def __init__(self, check_freq, save_path, verbose=1):
@@ -39,24 +42,28 @@ class TrainAndLoggingCallback(BaseCallback):
 class train():
     def __init__():
         callback = TrainAndLoggingCallback(check_freq=10000, save_path=CHECKPOINT_DIR)
-
+        #Hyperparameters
         model_params = {
-            #'n_steps': 4749, 'gamma': 0.856261109284277, 'learning_rate': 9.199154071473488e-05, 'clip_range': 0.37745265421497776, 'gae_lambda': 0.9572618098452194
             'n_steps': 8043, 'gamma': 0.8393671912093819, 'learning_rate': 1.6172427920845036e-05, 'clip_range': 0.23997123325665873, 'gae_lambda': 0.9566274038566734
         }
 
-        #Enviroment summon
+        #Training Environment Creation
         env = airetro.TrainingEnv()
         env = Monitor(env, LOG_DIR)
         env = DummyVecEnv([lambda:env])
         env = VecFrameStack(env, 4, channels_order='last')
 
         folder = Path(__file__)
+        #Path to load an existing model
         pathload = (folder.parent / 'models/rewardnodifferenceModelTrainedBattle2.zip').resolve()
+        #Path to save a trained model, overwrites models with the same name
         pathsave = (folder.parent / 'models/rewardnodifferenceModelTrainedBattle2Test.zip').resolve()
+        #Algorithm load
         model = PPO('CnnPolicy', env, tensorboard_log=LOG_DIR,verbose=1, **model_params)
+        #Loads the model to train
         model.load(pathload)
-
+        #Do Training
         model.learn(total_timesteps=1000000, callback=callback)
+        #Saves the trained model
         model.save(pathsave)
         print('Finished training')
