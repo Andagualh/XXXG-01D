@@ -92,7 +92,7 @@ class TrainingEnv(Env):
 		channels = np.reshape(resize, (82,82,1))
 		return channels
 
-	#Unfinished, only triggers when Full Black on Screen, flag used for Done state
+	#Unfinished, only triggers when Full Black on Screen, flag can be used for Done state. Add on step function.
 	def winState(self, observation):
 		color = cv2.cvtColor(observation, cv2.COLOR_BGR2RGB)
 		gray = cv2.cvtColor(observation, cv2.COLOR_BGR2GRAY)
@@ -116,7 +116,7 @@ class TrainingEnv(Env):
 		
 		print(flag)
 		return flag
-	#Unfinished, only triggers when Full Black on Screen, flag used for Done state
+	#Unfinished, only triggers when Full Black on Screen, flag can be used for Done state. Add on step function.
 	def loseState(self, observation):
 		color = cv2.cvtColor(observation, cv2.COLOR_BGR2RGB)
 		gray = cv2.cvtColor(observation, cv2.COLOR_BGR2GRAY)
