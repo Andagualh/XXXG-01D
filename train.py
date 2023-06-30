@@ -40,7 +40,10 @@ class TrainAndLoggingCallback(BaseCallback):
         return True
 
 class train():
-    def __init__():
+    def __init__(self):
+        pass
+    
+    def starttrain(self):
         callback = TrainAndLoggingCallback(check_freq=10000, save_path=CHECKPOINT_DIR)
         #Hyperparameters
         model_params = {

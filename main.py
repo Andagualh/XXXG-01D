@@ -18,7 +18,7 @@ while(select == 0):
         break
     elif(select == '3'):
         trainclass = train()
-        trainclass.__init__()
+        trainclass.starttrain()
         break
     elif(select == 'quit'):
         break
