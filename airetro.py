@@ -68,6 +68,10 @@ class TrainingEnv(Env):
 			reward = 0
 			self.enemyhealth = info['enemyhealth']
 		
+		if info['enemyhealth'] == 0 or info['playerhealth'] == 0:
+			if self.loseState(ogobs):
+				done = True
+
 		#Entry for Neuronal Network
 		return frame_delta, reward, done, info
 	
@@ -103,7 +107,7 @@ class TrainingEnv(Env):
 		color = color[45:68,99:120]
 
 		#Sprite to detect load
-		template = cv2.imread('images\samescaleWIN.jpg')
+		template = cv2.imread('images/samescaleWIN.jpg')
 		template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
 		cv2.imshow('gray',template)
 		res = cv2.matchTemplate(gray, template, cv2.TM_CCOEFF_NORMED)
@@ -127,9 +131,9 @@ class TrainingEnv(Env):
 		color = color[45:68,135:150]
 
 		#Sprite to detect load
-		template = cv2.imread('images\samescaleWIN.jpg')
+		template = cv2.imread('images/samescaleWIN.jpg')
 		template = cv2.cvtColor(template, cv2.COLOR_BGR2GRAY)
-		cv2.imshow('gray',template)
+		#cv2.imshow('gray',template)
 		res = cv2.matchTemplate(gray, template, cv2.TM_CCOEFF_NORMED)
 		threshold = 0.8
 
@@ -138,7 +142,6 @@ class TrainingEnv(Env):
 		if np.amax(res) > threshold:
 			flag = True	
 		
-		print(flag)
 		return flag
 	
 	#Debug method to capture frames to an jpg image
